@@ -1,0 +1,25 @@
+/* View Transitions API - 原生浏览器页面过渡 */
+@view-transition {
+  navigation: auto;
+}
+
+/* 修复闪白：让 html 背景色跟 body 保持一致 */
+/* PaperMod 的主题色变量挂在 body 上，过渡时浏览器会短暂显示 html 背景 */
+html {
+  background-color: var(--theme, #fff);
+}
+
+html[data-theme="dark"] {
+  background-color: #1d1e20; /* PaperMod dark 主题背景色 */
+}
+
+/* 过渡时长 */
+::view-transition-old(root) {
+  animation-duration: 0.18s;
+  animation-timing-function: ease-in;
+}
+
+::view-transition-new(root) {
+  animation-duration: 0.22s;
+  animation-timing-function: ease-out;
+}

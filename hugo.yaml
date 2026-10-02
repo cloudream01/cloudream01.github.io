@@ -1,4 +1,4 @@
-baseURL: "https://yourusername.github.io/"   # 改成你的 GitHub Pages 地址
+baseURL: "https://cloudream01.github.io/"
 locale: zh-cn
 title: "Your Blog"                            # 改成你的博客名
 theme: PaperMod
@@ -98,6 +98,10 @@ menu:
       name: 归档
       url: /archives/
       weight: 30
+    - identifier: guestbook
+      name: 留言板
+      url: /guestbook/
+      weight: 40
 
 # Markdown 渲染配置
 markup:

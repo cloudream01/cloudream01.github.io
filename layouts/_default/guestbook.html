@@ -1,0 +1,37 @@
+{{- define "main" }}
+<article class="post-single">
+  <header class="post-header">
+    <h1 class="post-title">{{ .Title }}</h1>
+    {{- if .Description }}
+    <p class="post-description">{{ .Description }}</p>
+    {{- end }}
+  </header>
+  <div class="post-content">
+    {{ .Content }}
+  </div>
+  <div class="comments">
+    {{- $repoID := "REPO_ID_HERE" }}
+    {{- if ne $repoID "REPO_ID_HERE" }}
+    <script src="https://giscus.app/client.js"
+            data-repo="yourusername/yourusername.github.io"
+            data-repo-id="{{ $repoID }}"
+            data-category="Guestbook"
+            data-category-id="GUESTBOOK_CATEGORY_ID_HERE"
+            data-mapping="specific"
+            data-term="guestbook"
+            data-strict="0"
+            data-reactions-enabled="1"
+            data-emit-metadata="0"
+            data-input-position="top"
+            data-theme="preferred_color_scheme"
+            data-lang="zh-CN"
+            data-loading="lazy"
+            crossorigin="anonymous"
+            async>
+    </script>
+    {{- else }}
+    <p style="color: var(--secondary); font-size: 0.9em;">留言功能需配置 Giscus，填入 repo-id 后即可启用。</p>
+    {{- end }}
+  </div>
+</article>
+{{- end }}
