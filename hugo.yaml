@@ -1,6 +1,6 @@
 baseURL: "https://cloudream01.github.io/"
 locale: zh-cn
-title: "Your Blog"                            # 改成你的博客名
+title: "舒逸的博客"
 theme: PaperMod
 
 # 构建优化
@@ -25,9 +25,9 @@ outputs:
 
 params:
   env: production
-  title: "Your Blog"
+  title: "舒逸的博客"
   description: ""
-  author: "Your Name"
+  author: "舒逸"
 
   # 默认主题，支持 auto / light / dark
   defaultTheme: auto
@@ -50,7 +50,7 @@ params:
   tocopen: false
 
   assets:
-    disableHLJS: true      # 禁用内置 highlight.js，用 Hugo 原生高亮，更快
+    disableHLJS: true
     disableFingerprinting: false
     favicon: ""
     favicon16x16: ""
@@ -59,7 +59,7 @@ params:
     safari_pinned_tab: ""
 
   label:
-    text: "Your Blog"      # 左上角 logo 文字，改成你的博客名
+    text: "舒逸的博客"
     icon: ""
     iconHeight: 35
 
@@ -71,7 +71,7 @@ params:
 
   socialIcons:
     - name: github
-      url: "https://github.com/yourusername"   # 改成你的 GitHub
+      url: "https://github.com/cloudream01"
 
   # 搜索
   fuseOpts:
@@ -95,7 +95,7 @@ menu:
       url: /tags/
       weight: 20
     - identifier: archives
-      name: 归档
+      name: 时间线
       url: /archives/
       weight: 30
     - identifier: guestbook
