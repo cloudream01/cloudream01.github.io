@@ -1,0 +1,115 @@
+baseURL: "https://yourusername.github.io/"   # 改成你的 GitHub Pages 地址
+locale: zh-cn
+title: "Your Blog"                            # 改成你的博客名
+theme: PaperMod
+
+# 构建优化
+minify:
+  disableXML: true
+  minifyOutput: true
+
+# 分页
+paginate: 10
+
+enableRobotsTXT: true
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+
+# 性能优化
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON   # 用于搜索功能
+
+params:
+  env: production
+  title: "Your Blog"
+  description: ""
+  author: "Your Name"
+
+  # 默认主题，支持 auto / light / dark
+  defaultTheme: auto
+  disableThemeToggle: false
+
+  ShowReadingTime: true
+  ShowShareButtons: false
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: false
+  ShowCodeCopyButtons: true
+  ShowWordCount: false
+  ShowRssButtonInSectionTermList: false
+  UseHugoToc: true
+  disableSpecial1stPost: true
+  disableScrollToTop: false
+  comments: true
+  hidemeta: false
+  hideSummary: false
+  showtoc: true
+  tocopen: false
+
+  assets:
+    disableHLJS: true      # 禁用内置 highlight.js，用 Hugo 原生高亮，更快
+    disableFingerprinting: false
+    favicon: ""
+    favicon16x16: ""
+    favicon32x32: ""
+    apple_touch_icon: ""
+    safari_pinned_tab: ""
+
+  label:
+    text: "Your Blog"      # 左上角 logo 文字，改成你的博客名
+    icon: ""
+    iconHeight: 35
+
+  # 首页展示模式，profile 模式类似 sinyalee.com/blog
+  homeInfoParams:
+    Title: "Hi"
+    Content: >
+      欢迎。这里是我的博客。
+
+  socialIcons:
+    - name: github
+      url: "https://github.com/yourusername"   # 改成你的 GitHub
+
+  # 搜索
+  fuseOpts:
+    isCaseSensitive: false
+    shouldSort: true
+    location: 0
+    distance: 1000
+    threshold: 0.4
+    minMatchCharLength: 0
+    limit: 10
+    keys: ["title", "permalink", "summary", "content"]
+
+menu:
+  main:
+    - identifier: search
+      name: 搜索
+      url: /search/
+      weight: 10
+    - identifier: tags
+      name: 标签
+      url: /tags/
+      weight: 20
+    - identifier: archives
+      name: 归档
+      url: /archives/
+      weight: 30
+
+# Markdown 渲染配置
+markup:
+  goldmark:
+    renderer:
+      unsafe: true   # 允许 HTML in markdown
+  highlight:
+    noClasses: false
+    anchorLineNos: true
+    codeFences: true
+    guessSyntax: true
+    lineNos: false
+    style: github-dark  # 代码高亮风格
+
+pygmentsUseClasses: true
