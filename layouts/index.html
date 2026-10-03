@@ -78,9 +78,7 @@
     show((current + 1) % sections.length);
   });
 
-  var saved = 0;
-  try { var s = parseInt(localStorage.getItem("syu-sec")); if (!isNaN(s)) saved = s; } catch (_) {}
-  show(saved);
+  show(0); // 始终默认展示"学习"栏目
 })();
 </script>
 
