@@ -156,3 +156,48 @@
   });
 })();
 </script>
+
+<!-- ⑥ hardWraps 缩进修复：将 <p> 内的 <br> 拆成独立 <p>，使首行缩进对每段都生效 -->
+<script>
+(function() {
+  var content = document.querySelector('.post-content');
+  if (!content) return;
+
+  // 找出所有直接子 <p> 中含有 <br> 的段落
+  var paras = Array.from(content.querySelectorAll(':scope > p'));
+  paras.forEach(function(p) {
+    if (!p.querySelector('br')) return;
+
+    // 按 <br> 节点切割 childNodes 为多段
+    var segments = [];
+    var cur = [];
+    p.childNodes.forEach(function(node) {
+      if (node.nodeName === 'BR') {
+        segments.push(cur);
+        cur = [];
+      } else {
+        cur.push(node.cloneNode(true));
+      }
+    });
+    if (cur.length) segments.push(cur);
+
+    // 过滤掉全空的段（如末尾多余的 <br>）
+    segments = segments.filter(function(seg) {
+      return seg.some(function(n) {
+        return n.nodeType === 3 ? n.textContent.trim() !== '' : true;
+      });
+    });
+
+    if (segments.length <= 1) return;
+
+    // 用新 <p> 替换原段落
+    var frag = document.createDocumentFragment();
+    segments.forEach(function(nodes) {
+      var newP = document.createElement('p');
+      nodes.forEach(function(n) { newP.appendChild(n); });
+      frag.appendChild(newP);
+    });
+    p.parentNode.replaceChild(frag, p);
+  });
+})();
+</script>
