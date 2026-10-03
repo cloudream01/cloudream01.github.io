@@ -203,3 +203,22 @@ mark {
   border-bottom-color: #60a5fa !important;
   background-color: rgba(96, 165, 250, 0.12);
 }
+
+/* ========== 面包屑：贴近左上角，与标题拉开距离 ========== */
+
+/* post-header 顶部 margin 缩小，让整个 header 更靠上 */
+.post-header {
+  margin-top: 8px;
+}
+
+/* 面包屑本身：字号略小，与标题之间加大间距 */
+.post-header .breadcrumbs {
+  font-size: 13px;
+  margin-bottom: 20px;   /* 面包屑与标题之间的间距，默认约 8px，现在拉到 20px */
+  opacity: 0.75;
+}
+
+.post-header .breadcrumbs:hover {
+  opacity: 1;
+}
+
