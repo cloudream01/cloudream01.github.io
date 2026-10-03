@@ -36,6 +36,15 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
+      # 缓存 Hugo 资源处理结果（CSS fingerprint、JS bundle），跳过重复的资源管线
+      - name: Cache Hugo resources
+        uses: actions/cache@v4
+        with:
+          path: resources/_gen
+          key: hugo-resources-${{ hashFiles('assets/**', 'themes/**/*.css', 'themes/**/*.js', 'hugo.yaml') }}
+          restore-keys: |
+            hugo-resources-
+
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5

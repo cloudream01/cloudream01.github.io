@@ -1,6 +1,6 @@
-{{/* extend_footer.html - 极速即时预加载、顶部灵动加载反馈、Obsidian 全特性渲染与陈旧缓存自动热同步 */}}
+{{/* extend_footer.html */}}
 
-<!-- 极速即时预加载：在鼠标悬停 65ms 或按下瞬间提前预取页面，点击直接命中缓存 -->
+<!-- ① Chrome Speculation Rules：鼠标悬停时提前预取同域页面 -->
 <script type="speculationrules">
 {
   "prefetch": [
@@ -8,7 +8,8 @@
       "where": {
         "and": [
           { "href_matches": "/*" },
-          { "not": { "href_matches": "/*\\?*" } }
+          { "not": { "href_matches": "/*\\?*" } },
+          { "not": { "href_matches": "/search*" } }
         ]
       },
       "eagerness": "moderate"
@@ -17,15 +18,15 @@
 }
 </script>
 
+<!-- ② instant.page 回退方案：兼容不支持 Speculation Rules 的浏览器 -->
 <script>
-/*! instant.page v5.2.0 - (C) 2019-2023 Alexandre Dieulot - https://instant.page/license */
+/*! instant.page v5.2.0 - fallback for non-Chromium browsers */
 (function() {
+  if (HTMLScriptElement.supports && HTMLScriptElement.supports('speculationrules')) return;
   var prefetcher = document.createElement('link');
   var isSupported = prefetcher.relList && prefetcher.relList.supports && prefetcher.relList.supports('prefetch');
   if (!isSupported) return;
-
   var preloaded = new Set();
-
   function prefetch(url) {
     if (preloaded.has(url)) return;
     preloaded.add(url);
@@ -34,18 +35,13 @@
     link.href = url;
     document.head.appendChild(link);
   }
-
   var timer;
   document.addEventListener('pointerover', function(e) {
     var a = e.target.closest('a');
     if (!a || !a.href || a.origin !== location.origin || a.pathname === location.pathname || a.getAttribute('href').startsWith('#')) return;
     timer = setTimeout(function() { prefetch(a.href); }, 65);
   }, { passive: true });
-
-  document.addEventListener('pointerout', function() {
-    clearTimeout(timer);
-  }, { passive: true });
-
+  document.addEventListener('pointerout', function() { clearTimeout(timer); }, { passive: true });
   document.addEventListener('touchstart', function(e) {
     var a = e.target.closest('a');
     if (!a || !a.href || a.origin !== location.origin || a.pathname === location.pathname || a.getAttribute('href').startsWith('#')) return;
@@ -54,61 +50,42 @@
 })();
 </script>
 
-<!-- 顶部 2px 极简即时加载条：点击瞬间提供反馈，彻底告别假死等待感 -->
+<!-- ③ 顶部极简加载进度条：点击瞬间给出视觉反馈 -->
 <style>
 #top-progress {
   position: fixed;
-  top: 0;
-  left: 0;
-  height: 2.5px;
+  top: 0; left: 0;
+  height: 2px;
   width: 0%;
   background: var(--primary);
   opacity: 0;
   z-index: 99999;
   pointer-events: none;
-  transition: width 0.3s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.2s ease;
+  transition: width 0.3s cubic-bezier(0.1,0.9,0.2,1), opacity 0.2s ease;
 }
-#top-progress.loading {
-  opacity: 1;
-  width: 75%;
-}
-#top-progress.done {
-  width: 100%;
-  opacity: 0;
-  transition: width 0.15s ease, opacity 0.25s 0.1s ease;
-}
+#top-progress.loading { opacity: 1; width: 75%; }
+#top-progress.done    { width: 100%; opacity: 0; transition: width 0.15s ease, opacity 0.25s 0.1s ease; }
 </style>
 <div id="top-progress"></div>
-
 <script>
 (function() {
   var bar = document.getElementById('top-progress');
   if (!bar) return;
-
   document.addEventListener('click', function(e) {
     var a = e.target.closest('a');
-    if (!a || !a.href) return;
-    if (a.origin !== location.origin) return;
-    if (a.target === '_blank') return;
-    if (a.getAttribute('href').startsWith('#')) return;
+    if (!a || !a.href || a.origin !== location.origin || a.target === '_blank' || a.getAttribute('href').startsWith('#')) return;
     if (a.pathname === location.pathname && a.search === location.search) return;
-
-    // 点击瞬间启动顶部指示条
     bar.classList.remove('done');
     bar.classList.add('loading');
   });
-
   window.addEventListener('pageshow', function() {
     bar.classList.add('done');
-    setTimeout(function() {
-      bar.classList.remove('loading', 'done');
-      bar.style.width = '0%';
-    }, 400);
+    setTimeout(function() { bar.classList.remove('loading','done'); bar.style.width='0%'; }, 400);
   });
 })();
 </script>
 
-<!-- 自动热同步：检测到服务器有新版本时自动静默刷新陈旧页面，无需手动 F5 -->
+<!-- ④ 热版本同步：发布新版后，访问到陈旧强缓存页面时静默刷新 -->
 <script>
 (function() {
   try {
@@ -116,79 +93,61 @@
     if (!meta) return;
     var currentVer = parseInt(meta.getAttribute('content'), 10);
     if (!currentVer) return;
-
     var lastKnownVer = parseInt(localStorage.getItem('syu-site-ver'), 10) || 0;
-
     if (currentVer >= lastKnownVer) {
       localStorage.setItem('syu-site-ver', currentVer);
-    } else if (currentVer < lastKnownVer) {
-      // 当前页面是从陈旧强缓存读出来的，自动静默刷新拉取最新发布版
+    } else {
+      // 从陈旧缓存读出来的，拉取最新版
       window.location.reload();
-      return;
     }
-
-    // 监听前进后退的内存冻结缓存 (bfcache)，确保返回时也是最新状态
+    // bfcache：前进后退时只检测版本变化，不无脑 reload
     window.addEventListener('pageshow', function(e) {
-      if (e.persisted) {
-        window.location.reload();
-      }
+      if (!e.persisted) return;
+      var storedVer = parseInt(localStorage.getItem('syu-site-ver'), 10) || 0;
+      if (storedVer > currentVer) window.location.reload();
     });
-  } catch (_) {}
+  } catch(_) {}
 })();
 </script>
 
-<!-- Obsidian 语法增强：高亮 ==、单波浪删除线 ~、Callouts 提示框、拖入图片 ![[...]] -->
+<!-- ⑤ Obsidian 语法增强：==高亮==、~删除线~、Callout 提示框、![[图片]] -->
 <script>
 (function() {
-  var content = document.querySelector('.post-content');
+  var content = document.querySelector('.post-content, .md-content');
   if (!content) return;
 
-  // 1. 处理 Obsidian Callouts 提示块 (> [!NOTE], > [!TIP], > [!WARNING] 等)
-  var bqs = content.querySelectorAll('blockquote');
-  bqs.forEach(function(bq) {
+  // Obsidian Callouts
+  content.querySelectorAll('blockquote').forEach(function(bq) {
     var firstP = bq.querySelector('p');
     if (!firstP) return;
     var match = firstP.innerHTML.match(/^\[!([a-zA-Z0-9_-]+)\][ \t]*(.*)/);
-    if (match) {
-      var type = match[1].toLowerCase();
-      var title = match[2] || match[1].toUpperCase();
-      bq.classList.add('obsidian-callout', 'callout-' + type);
-      firstP.innerHTML = '<span class="callout-title">' + title + '</span>' + firstP.innerHTML.substring(match[0].length);
-    }
+    if (!match) return;
+    var type = match[1].toLowerCase();
+    var title = match[2] || match[1].toUpperCase();
+    bq.classList.add('obsidian-callout', 'callout-' + type);
+    firstP.innerHTML = '<span class="callout-title">' + title + '</span>' + firstP.innerHTML.substring(match[0].length);
   });
 
-  // 2. 安全替换非代码区域的 ==高亮==、删除线 与 Obsidian 图片 ![[...]]
+  // ==高亮==、~删除线~、![[图片]]
   var walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT, {
     acceptNode: function(node) {
-      if (node.parentElement && (node.parentElement.closest('pre') || node.parentElement.closest('code'))) {
-        return NodeFilter.FILTER_REJECT;
-      }
-      return NodeFilter.FILTER_ACCEPT;
+      return (node.parentElement && (node.parentElement.closest('pre') || node.parentElement.closest('code')))
+        ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
     }
   });
-
   var textNodes = [];
-  while (walker.nextNode()) {
-    textNodes.push(walker.currentNode);
-  }
-
+  while (walker.nextNode()) textNodes.push(walker.currentNode);
   textNodes.forEach(function(node) {
     var val = node.nodeValue;
-    if (!val) return;
-    if (val.indexOf('==') === -1 && val.indexOf('~') === -1 && val.indexOf('![[') === -1) return;
-
+    if (!val || (val.indexOf('==')===-1 && val.indexOf('~')===-1 && val.indexOf('![[') === -1)) return;
     var replaced = val
-      // ==高亮文本== -> <mark>高亮文本</mark>
       .replace(/==([^=\n\r]+?)==/g, '<mark>$1</mark>')
-      // 兼容两边或单边删除线（如 ~~jsla 或 ~jsla）
       .replace(/(^|[ \t\n])(?:~~|~)([^~\n\r\s]+?)(?:~~|~|(?=[\n\r]|$))/g, '$1<del>$2</del>')
-      // Obsidian 图片嵌入 ![[图片名.png]]
-      .replace(/!\[\[([^\]|]+?\.(?:png|jpg|jpeg|gif|webp|svg|bmp))(?:\|(\d+)(?:x\d+)?)?\]\]/gi, function(match, filename, width) {
-        var cleanName = encodeURI(filename.trim());
+      .replace(/!\[\[([^\]|]+?\.(?:png|jpg|jpeg|gif|webp|svg|bmp))(?:\|(\d+)(?:x\d+)?)?\]\]/gi, function(m, filename, width) {
+        var src = '/' + encodeURI(filename.trim());
         var w = width ? ' width="' + width + '"' : '';
-        return '<img src="/' + cleanName + '"' + w + ' alt="' + filename.trim() + '" style="max-width:100%;height:auto;border-radius:var(--radius);margin:1.5rem auto;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.06);">';
+        return '<img src="' + src + '"' + w + ' alt="' + filename.trim() + '" loading="lazy" decoding="async" style="max-width:100%;height:auto;border-radius:var(--radius);margin:1.5rem auto;display:block;">';
       });
-
     if (replaced !== val) {
       var span = document.createElement('span');
       span.innerHTML = replaced;

@@ -54,11 +54,12 @@ params:
   assets:
     disableHLJS: true
     disableFingerprinting: false
-    favicon: ""
-    favicon16x16: ""
-    favicon32x32: ""
-    apple_touch_icon: ""
-    safari_pinned_tab: ""
+    # favicon 留空则使用 static/ 目录下的默认文件，如无文件则浏览器自动请求 /favicon.ico
+    # favicon: ""
+    # favicon16x16: ""
+    # favicon32x32: ""
+    # apple_touch_icon: ""
+    # safari_pinned_tab: ""
 
   label:
     text: "舒逸的博客"
@@ -83,7 +84,7 @@ params:
     threshold: 0.4
     minMatchCharLength: 0
     limit: 10
-    keys: ["title", "permalink", "summary", "content"]
+    keys: ["title", "permalink", "summary"]
 
 menu:
   main:
@@ -141,6 +142,7 @@ module:
       target: layouts
     - source: assets
       target: assets
-    - source: .
-      target: static
-      files: ["*.png", "*.jpg", "*.jpeg", "*.webp", "*.gif", "*.svg"]
+    # 注意：若要将根目录图片发布，请将图片移到 static/ 目录，不要用根目录 mount
+    # - source: .
+    #   target: static
+    #   files: ["*.png", "*.jpg", "*.jpeg", "*.webp", "*.gif", "*.svg"]

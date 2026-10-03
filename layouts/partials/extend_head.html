@@ -1,5 +1,12 @@
-{{/* extend_head.html - 解决浏览器陈旧缓存、确保每次发布后页面实时获取最新版 */}}
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
+{{/* extend_head.html */}}
+{{/* 注意：HTTP meta Cache-Control 对现代浏览器几乎无效，且 no-store 会破坏所有缓存。
+     真正的缓存控制由服务器 HTTP Header 决定（GitHub Pages 默认 10min / CDN可配置）。
+     此处只注入构建时间戳供热同步脚本使用，不再乱设缓存指令。 */}}
 <meta name="site-build-timestamp" content="{{ now.Unix }}">
+
+{{/* 预连接 giscus 评论系统，消除评论区域的 DNS+TCP 握手延迟 */}}
+<link rel="preconnect" href="https://giscus.app" crossorigin>
+<link rel="dns-prefetch" href="https://giscus.app">
+
+{{/* 预连接 GitHub API（giscus 依赖） */}}
+<link rel="dns-prefetch" href="https://api.github.com">
