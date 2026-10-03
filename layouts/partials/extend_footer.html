@@ -157,31 +157,29 @@
 })();
 </script>
 
-<!-- ⑥ hardWraps 缩进修复：将 <p> 内的 <br> 拆成独立 <p>，使首行缩进对每段都生效 -->
+<!-- ⑥ hardWraps 换行缩进修复：保留段落容器，内部行用 line-wrap 独立缩进，无额外空行 -->
 <script>
 (function() {
-  var content = document.querySelector('.post-content');
+  var content = document.querySelector('.post-content, .md-content');
   if (!content) return;
 
-  // 找出所有直接子 <p> 中含有 <br> 的段落
   var paras = Array.from(content.querySelectorAll(':scope > p'));
   paras.forEach(function(p) {
     if (!p.querySelector('br')) return;
 
-    // 按 <br> 节点切割 childNodes 为多段
     var segments = [];
     var cur = [];
-    p.childNodes.forEach(function(node) {
+    Array.from(p.childNodes).forEach(function(node) {
       if (node.nodeName === 'BR') {
         segments.push(cur);
         cur = [];
       } else {
-        cur.push(node.cloneNode(true));
+        cur.push(node);
       }
     });
     if (cur.length) segments.push(cur);
 
-    // 过滤掉全空的段（如末尾多余的 <br>）
+    // 过滤掉首尾纯空行
     segments = segments.filter(function(seg) {
       return seg.some(function(n) {
         return n.nodeType === 3 ? n.textContent.trim() !== '' : true;
@@ -190,14 +188,20 @@
 
     if (segments.length <= 1) return;
 
-    // 用新 <p> 替换原段落
     var frag = document.createDocumentFragment();
     segments.forEach(function(nodes) {
-      var newP = document.createElement('p');
-      nodes.forEach(function(n) { newP.appendChild(n); });
-      frag.appendChild(newP);
+      var span = document.createElement('span');
+      span.className = 'line-wrap';
+      nodes.forEach(function(n) { span.appendChild(n); });
+      frag.appendChild(span);
     });
-    p.parentNode.replaceChild(frag, p);
+
+    p.classList.add('has-line-wraps');
+    while (p.firstChild) {
+      p.removeChild(p.firstChild);
+    }
+    p.appendChild(frag);
   });
 })();
 </script>
+

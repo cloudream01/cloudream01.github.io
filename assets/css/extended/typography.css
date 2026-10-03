@@ -11,32 +11,32 @@
   letter-spacing: 0.02em;
 }
 
-/* 正文段落：首行缩进，并收紧段间距
-   （有缩进后段间距不需要太大，否则显得稀疏） */
+/* 正文段落：首行缩进；段间距保持适度空隙（在 md 中空一行时形成分块） */
 .post-content > p,
 .md-content > p {
   text-indent: 2em;
-  margin-bottom: 0.6em;
+  margin-bottom: var(--content-gap);
 }
 
-/* 以下场景取消缩进：
-   - 紧跟标题的第一段（与标题衔接，不缩进更美观）
+/* 当段落内含有主动换行时：父级 p 取消 text-indent，由内部各行分别控制缩进 */
+.post-content > p.has-line-wraps,
+.md-content > p.has-line-wraps {
+  text-indent: 0;
+}
+
+/* 主动换行（单次回车）生成的行：块级并首行缩进 2em，上下边距为 0（正常换行，无多余空行） */
+.post-content .line-wrap,
+.md-content .line-wrap {
+  display: block;
+  text-indent: 2em;
+  margin: 0;
+  padding: 0;
+}
+
+/* 以下特殊容器取消缩进：
    - 引用块内的段落
    - 列表内的段落
-   - 图片说明段落
-   - 代码块内容 */
-.post-content > h1 + p,
-.post-content > h2 + p,
-.post-content > h3 + p,
-.post-content > h4 + p,
-.post-content > h5 + p,
-.post-content > h6 + p,
-.md-content > h1 + p,
-.md-content > h2 + p,
-.md-content > h3 + p,
-.md-content > h4 + p,
-.md-content > h5 + p,
-.md-content > h6 + p,
+   - 图片说明段落 */
 .post-content blockquote p,
 .md-content blockquote p,
 .post-content li p,
