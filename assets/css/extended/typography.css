@@ -1,0 +1,76 @@
+/* ========================================================
+   中文书籍阅读排版优化
+   目标：首行缩进 + 舒适行距 + 中文字间距
+   作用范围：文章正文 (.post-content / .md-content) 的段落
+   ======================================================== */
+
+/* 正文基础：行距、字间距 */
+.post-content,
+.md-content {
+  line-height: 1.85;
+  letter-spacing: 0.02em;
+}
+
+/* 正文段落：首行缩进，并收紧段间距
+   （有缩进后段间距不需要太大，否则显得稀疏） */
+.post-content > p,
+.md-content > p {
+  text-indent: 2em;
+  margin-bottom: 0.6em;
+}
+
+/* 以下场景取消缩进：
+   - 紧跟标题的第一段（与标题衔接，不缩进更美观）
+   - 引用块内的段落
+   - 列表内的段落
+   - 图片说明段落
+   - 代码块内容 */
+.post-content > h1 + p,
+.post-content > h2 + p,
+.post-content > h3 + p,
+.post-content > h4 + p,
+.post-content > h5 + p,
+.post-content > h6 + p,
+.md-content > h1 + p,
+.md-content > h2 + p,
+.md-content > h3 + p,
+.md-content > h4 + p,
+.md-content > h5 + p,
+.md-content > h6 + p,
+.post-content blockquote p,
+.md-content blockquote p,
+.post-content li p,
+.md-content li p,
+.post-content figcaption p,
+.md-content figcaption p {
+  text-indent: 0;
+}
+
+/* 标题行距收紧（标题不需要 1.85，反而显得松散） */
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5,
+.post-content h6,
+.md-content h1,
+.md-content h2,
+.md-content h3,
+.md-content h4,
+.md-content h5,
+.md-content h6 {
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+}
+
+/* 列表行距适当，不需要和正文一样宽松 */
+.post-content li,
+.md-content li {
+  line-height: 1.75;
+}
+
+/* 引用块行距 */
+.post-content blockquote,
+.md-content blockquote {
+  line-height: 1.75;
+}
