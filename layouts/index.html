@@ -1,0 +1,87 @@
+{{- define "main" }}
+
+{{- if site.Params.homeInfoParams }}
+{{- partial "home_info.html" . }}
+{{- end }}
+
+{{- $sections := slice
+  (dict "id" "study"    "label" "学习")
+  (dict "id" "thoughts" "label" "随想")
+  (dict "id" "journal"  "label" "日志")
+}}
+
+<div class="section-nav">
+  <button class="section-arrow" id="arrow-prev" aria-label="上一栏目">←</button>
+  <div class="section-label-wrap">
+    <span class="section-name" id="section-label">学习</span>
+    <div class="section-dots">
+      {{- range $i, $s := $sections }}
+      <span class="section-dot{{ if eq $i 0 }} active{{ end }}" data-idx="{{ $i }}"></span>
+      {{- end }}
+    </div>
+  </div>
+  <button class="section-arrow" id="arrow-next" aria-label="下一栏目">→</button>
+</div>
+
+{{- range $sections }}
+<div class="section-panel" data-section="{{ .id }}">
+  {{- $pages := where $.Site.RegularPages "Section" .id }}
+  {{- if $pages }}
+    {{- range $pages.ByDate.Reverse }}
+    <article class="post-entry">
+      <header class="entry-header">
+        <h2 class="entry-hint-parent">{{ .Title }}</h2>
+      </header>
+      {{- with (or .Description .Summary) }}
+      <div class="entry-content"><p>{{ . | plainify }}</p></div>
+      {{- end }}
+      <footer class="entry-footer">
+        <span>{{ .Date.Format "2006年1月2日" }}</span>
+      </footer>
+      <a class="entry-link" aria-label="{{ .Title }}" href="{{ .Permalink }}"></a>
+    </article>
+    {{- end }}
+  {{- else }}
+  <p style="color:var(--secondary);padding:2rem 0;text-align:center;font-size:0.9em;">暂无文章</p>
+  {{- end }}
+</div>
+{{- end }}
+
+<script>
+(function () {
+  var sections = [
+    { id: "study",    label: "学习" },
+    { id: "thoughts", label: "随想" },
+    { id: "journal",  label: "日志" }
+  ];
+  var panels  = document.querySelectorAll(".section-panel");
+  var dots    = document.querySelectorAll(".section-dot");
+  var nameEl  = document.getElementById("section-label");
+  var current = 0;
+
+  function show(idx) {
+    panels.forEach(function (p, i) {
+      p.classList.toggle("section-panel--active", i === idx);
+    });
+    dots.forEach(function (d, i) {
+      d.classList.toggle("active", i === idx);
+    });
+    nameEl.textContent = sections[idx].label;
+    current = idx;
+    try { localStorage.setItem("syu-sec", idx); } catch (_) {}
+  }
+
+  document.getElementById("arrow-prev").addEventListener("click", function () {
+    show((current - 1 + sections.length) % sections.length);
+  });
+  document.getElementById("arrow-next").addEventListener("click", function () {
+    show((current + 1) % sections.length);
+  });
+
+  var saved = 0;
+  try { var s = parseInt(localStorage.getItem("syu-sec")); if (!isNaN(s)) saved = s; } catch (_) {}
+  show(saved);
+})();
+</script>
+
+{{- end }}

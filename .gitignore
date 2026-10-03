@@ -3,6 +3,5 @@ resources/_gen/
 .hugo_build.lock
 node_modules/
 
-# Obsidian 工作区文件
-.obsidian/workspace.json
-.obsidian/workspace-mobile.json
+# Obsidian 配置目录
+.obsidian/

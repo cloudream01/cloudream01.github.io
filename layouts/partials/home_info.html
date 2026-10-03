@@ -1,0 +1,64 @@
+{{- with site.Params.homeInfoParams }}
+<article class="first-entry home-info">
+  <header class="entry-header">
+    <h1>{{ .Title | markdownify }}</h1>
+  </header>
+  {{- if .Content }}
+  <div class="entry-content md-content">
+    {{ .Content | $.Page.RenderString (dict "display" "block") }}
+  </div>
+  {{- end }}
+  <footer class="entry-footer">
+    <div class="home-social">
+      {{- range site.Params.socialIcons }}
+      <a href="{{ trim .url " " | safeURL }}" target="_blank" rel="noopener noreferrer" title="{{ .name | title }}">
+        {{ partial "svg.html" . }}
+      </a>
+      {{- end }}
+      <button id="btn-qq" title="QQ">
+        {{ partial "svg.html" (dict "name" "qq") }}
+      </button>
+      <button id="btn-wechat" title="微信">
+        {{ partial "svg.html" (dict "name" "wechat") }}
+      </button>
+    </div>
+  </footer>
+</article>
+
+<div class="copy-toast" id="copy-toast"></div>
+
+<script>
+(function () {
+  function toast(msg) {
+    var el = document.getElementById("copy-toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    setTimeout(function () { el.classList.remove("show"); }, 2200);
+  }
+
+  function copyText(text, label) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(function () { toast("已复制" + label + "：" + text); });
+    } else {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      toast("已复制" + label + "：" + text);
+    }
+  }
+
+  document.getElementById("btn-qq").addEventListener("click", function () {
+    copyText("2154650766", " QQ 号");
+  });
+
+  document.getElementById("btn-wechat").addEventListener("click", function () {
+    copyText("chenzejunshiwo", "微信号");
+  });
+})();
+</script>
+{{- end }}

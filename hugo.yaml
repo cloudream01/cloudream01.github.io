@@ -15,6 +15,7 @@ enableRobotsTXT: true
 buildDrafts: false
 buildFuture: false
 buildExpired: false
+hasCJKLanguage: true
 
 # 性能优化
 outputs:
@@ -27,18 +28,19 @@ params:
   env: production
   title: "舒逸的博客"
   description: ""
-  author: "舒逸"
+  mainSections: ["study", "thoughts", "journal"]
+  DateFormat: "2006年1月2日"
 
   # 默认主题，支持 auto / light / dark
   defaultTheme: auto
   disableThemeToggle: false
 
-  ShowReadingTime: true
+  ShowReadingTime: false
   ShowShareButtons: false
   ShowPostNavLinks: true
-  ShowBreadCrumbs: false
+  ShowBreadCrumbs: true
   ShowCodeCopyButtons: true
-  ShowWordCount: false
+  ShowWordCount: true
   ShowRssButtonInSectionTermList: false
   UseHugoToc: true
   disableSpecial1stPost: true
@@ -65,9 +67,8 @@ params:
 
   # 首页展示模式，profile 模式类似 sinyalee.com/blog
   homeInfoParams:
-    Title: "Hi"
-    Content: >
-      欢迎。这里是我的博客。
+    Title: "云舒梦逸，行止随心"
+    Content: ""
 
   socialIcons:
     - name: github
@@ -86,6 +87,10 @@ params:
 
 menu:
   main:
+    - identifier: home
+      name: 首页
+      url: /
+      weight: 5
     - identifier: search
       name: 搜索
       url: /search/

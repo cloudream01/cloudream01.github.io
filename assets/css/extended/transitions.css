@@ -1,25 +1,49 @@
-/* View Transitions API - 原生浏览器页面过渡 */
+/* View Transitions API - 丝滑无闪烁页面过渡 */
 @view-transition {
   navigation: auto;
 }
 
-/* 修复闪白：让 html 背景色跟 body 保持一致 */
-/* PaperMod 的主题色变量挂在 body 上，过渡时浏览器会短暂显示 html 背景 */
+/* 统一 html 背景，防止页面切换及交叉渲染时露底闪白 */
 html {
-  background-color: var(--theme, #fff);
+  background-color: var(--theme, #ffffff);
 }
 
 html[data-theme="dark"] {
-  background-color: #1d1e20; /* PaperMod dark 主题背景色 */
+  background-color: var(--theme, #1d1e20);
 }
 
-/* 过渡时长 */
+/* 优化过渡层，防止混合图层在快速切换时色差闪烁 */
+::view-transition-group(root) {
+  animation-duration: 0.12s;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  mix-blend-mode: normal;
+}
+
 ::view-transition-old(root) {
-  animation-duration: 0.18s;
-  animation-timing-function: ease-in;
+  animation: 0.1s ease-out both vt-fade-out;
 }
 
 ::view-transition-new(root) {
-  animation-duration: 0.22s;
-  animation-timing-function: ease-out;
+  animation: 0.12s ease-in both vt-fade-in;
+}
+
+@keyframes vt-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes vt-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
 }

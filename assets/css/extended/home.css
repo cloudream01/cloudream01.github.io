@@ -1,0 +1,141 @@
+/* ========== Home info 居中 ========== */
+.home-info {
+  text-align: center;
+}
+
+.home-info .entry-header h1 {
+  font-size: 1.4rem;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+
+.home-info .entry-footer {
+  justify-content: center;
+}
+
+/* 社交图标行 */
+.home-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-top: 1rem;
+}
+
+.home-social a,
+.home-social button {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--secondary);
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.home-social a:hover,
+.home-social button:hover {
+  color: var(--primary);
+}
+
+.home-social svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Toast 提示 */
+.copy-toast {
+  position: fixed;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: var(--primary);
+  color: var(--theme);
+  padding: 0.45rem 1.1rem;
+  border-radius: 2rem;
+  font-size: 0.82rem;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+  z-index: 999;
+  white-space: nowrap;
+}
+
+.copy-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ========== 栏目切换器 ========== */
+.section-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 2.5rem 0 0;
+  padding: 0.8rem 1.5rem;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.section-arrow {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--secondary);
+  font-size: 1.05rem;
+  padding: 0.3rem 0.6rem;
+  line-height: 1;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+
+.section-arrow:hover {
+  color: var(--primary);
+}
+
+.section-label-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.section-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--primary);
+  letter-spacing: 0.12em;
+}
+
+.section-dots {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.section-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--tertiary);
+  transition: background 0.2s;
+}
+
+.section-dot.active {
+  background: var(--primary);
+}
+
+/* ========== 面板 — 关键：默认隐藏 ========== */
+.section-panel {
+  display: none;
+}
+
+.section-panel--active {
+  display: block;
+  animation: panel-in 0.2s ease-out;
+}
+
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

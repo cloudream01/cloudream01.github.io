@@ -1,0 +1,43 @@
+{{- if (.Param "ShowBreadCrumbs") -}}
+<nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+    {{- $ancestors := .Ancestors.Reverse -}}
+    {{- range $i, $bc := $ancestors }}
+        {{- if eq $i 0 }}
+            <a href="{{ $bc.RelPermalink }}">{{ i18n "home" | default "首页" }}</a>
+        {{- else }}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a class="bc-parent" href="{{ $bc.RelPermalink }}">{{ $bc.Title }}</a>
+        {{- end }}
+    {{- end }}
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+
+<script>
+(function() {
+  try {
+    var ref = document.referrer;
+    if (!ref) return;
+    var u = new URL(ref);
+    if (u.origin !== location.origin) return;
+    var p = decodeURIComponent(u.pathname);
+    var parent = document.querySelector('.bc-parent');
+    if (!parent) return;
+
+    var tagMatch = p.match(/\/tags\/([^\/]+)/);
+    if (tagMatch && tagMatch[1]) {
+      parent.textContent = tagMatch[1];
+      parent.href = u.pathname;
+    } else if (p.indexOf('/archives') !== -1) {
+      parent.textContent = "时间线";
+      parent.href = u.pathname;
+    }
+  } catch (_) {}
+})();
+</script>
+{{- end -}}
