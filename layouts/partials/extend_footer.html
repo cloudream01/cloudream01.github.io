@@ -1,1 +1,51 @@
-{{/* extend_footer.html - 按需注入额外内容 */}}
+{{/* extend_footer.html - 即时预加载，极大消除 GitHub Pages 网络延迟 */}}
+
+<!-- 现代浏览器原生预加载规则 -->
+<script type="speculationrules">
+{
+  "prefetch": [
+    {
+      "where": {
+        "and": [
+          { "href_matches": "/*" },
+          { "not": { "href_matches": "/*\\?*" } }
+        ]
+      },
+      "eagerness": "moderate"
+    }
+  ]
+}
+</script>
+
+<!-- 通用 hover 预加载脚本：鼠标悬停或触碰链接时即提前静默加载页面 -->
+<script>
+(function() {
+  var prefetched = new Set();
+  function prefetch(url) {
+    if (prefetched.has(url)) return;
+    prefetched.add(url);
+    var link = document.createElement("link");
+    link.rel = "prefetch";
+    link.href = url;
+    document.head.appendChild(link);
+  }
+
+  document.addEventListener("pointerover", function(e) {
+    var a = e.target.closest("a");
+    if (!a || !a.href) return;
+    if (a.origin !== location.origin) return;
+    if (a.pathname === location.pathname) return;
+    if (a.getAttribute("href").startsWith("#")) return;
+    prefetch(a.href);
+  }, { passive: true });
+
+  document.addEventListener("touchstart", function(e) {
+    var a = e.target.closest("a");
+    if (!a || !a.href) return;
+    if (a.origin !== location.origin) return;
+    if (a.pathname === location.pathname) return;
+    if (a.getAttribute("href").startsWith("#")) return;
+    prefetch(a.href);
+  }, { passive: true });
+})();
+</script>
