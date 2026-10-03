@@ -1,4 +1,4 @@
-{{/* extend_footer.html - 即时预加载与 Obsidian 语法支持 */}}
+{{/* extend_footer.html - 即时预加载与 Obsidian 全特性渲染支持 */}}
 
 <!-- 现代浏览器原生预加载规则 -->
 <script type="speculationrules">
@@ -50,11 +50,57 @@
 })();
 </script>
 
-<!-- 支持 Obsidian ==高亮文本== 语法 -->
+<!-- Obsidian 语法增强：高亮 ==、单波浪删除线 ~、Callouts 提示框 -->
 <script>
 (function() {
   var content = document.querySelector('.post-content');
   if (!content) return;
-  content.innerHTML = content.innerHTML.replace(/==([^=\n\r]+?)==/g, '<mark>$1</mark>');
+
+  // 1. 处理 Obsidian Callouts 提示块 (> [!NOTE], > [!TIP], > [!WARNING] 等)
+  var bqs = content.querySelectorAll('blockquote');
+  bqs.forEach(function(bq) {
+    var firstP = bq.querySelector('p');
+    if (!firstP) return;
+    var match = firstP.innerHTML.match(/^\[!([a-zA-Z0-9_-]+)\][ \t]*(.*)/);
+    if (match) {
+      var type = match[1].toLowerCase();
+      var title = match[2] || match[1].toUpperCase();
+      bq.classList.add('obsidian-callout', 'callout-' + type);
+      firstP.innerHTML = '<span class="callout-title">' + title + '</span>' + firstP.innerHTML.substring(match[0].length);
+    }
+  });
+
+  // 2. 安全替换非代码区域的 ==高亮== 与 ~单波浪删除线~
+  var walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT, {
+    acceptNode: function(node) {
+      if (node.parentElement && (node.parentElement.closest('pre') || node.parentElement.closest('code'))) {
+        return NodeFilter.FILTER_REJECT;
+      }
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+
+  var textNodes = [];
+  while (walker.nextNode()) {
+    textNodes.push(walker.currentNode);
+  }
+
+  textNodes.forEach(function(node) {
+    var val = node.nodeValue;
+    if (!val) return;
+    if (val.indexOf('==') === -1 && val.indexOf('~') === -1) return;
+
+    var replaced = val
+      // ==高亮文本== -> <mark>高亮文本</mark>
+      .replace(/==([^=\n\r]+?)==/g, '<mark>$1</mark>')
+      // ~单波浪删除线~ -> <del>删除线</del>（避免破坏公式）
+      .replace(/(^|[^\w~])~([^~\n\r\s]+?)~($|[^\w~])/g, '$1<del>$2</del>$3');
+
+    if (replaced !== val) {
+      var span = document.createElement('span');
+      span.innerHTML = replaced;
+      node.parentNode.replaceChild(span, node);
+    }
+  });
 })();
 </script>

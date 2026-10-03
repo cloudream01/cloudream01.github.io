@@ -153,3 +153,24 @@ mark {
   background-color: #fbc02d;
   color: #000000;
 }
+
+/* Obsidian Callout 提示卡片样式 */
+.obsidian-callout {
+  margin: 1.2rem 0;
+  padding: 0.8rem 1.2rem;
+  border-left: 4px solid var(--primary);
+  background: var(--code-bg);
+  border-radius: var(--radius);
+}
+
+.obsidian-callout .callout-title {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: var(--primary);
+}
+
+.callout-note { border-left-color: #0288d1; }
+.callout-tip, .callout-hint { border-left-color: #00897b; }
+.callout-warning, .callout-caution { border-left-color: #f57c00; }
+.callout-danger, .callout-error { border-left-color: #e53935; }

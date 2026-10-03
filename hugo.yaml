@@ -112,7 +112,14 @@ menu:
 markup:
   goldmark:
     renderer:
-      unsafe: true   # 允许 HTML in markdown
+      unsafe: true        # 允许 HTML in markdown
+      hardWraps: true     # Obsidian 习惯：直接回车即换行，所见即所得
+    extensions:
+      strikethrough: true # 删除线
+      table: true         # 表格
+      taskList: true      # 任务清单 - [ ] - [x]
+      typographer: false  # 避免中文标点被意外转换
+      footnote: true      # 脚注
   highlight:
     noClasses: false
     anchorLineNos: true
