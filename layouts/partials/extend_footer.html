@@ -1,4 +1,4 @@
-{{/* extend_footer.html - 极速即时预加载、顶部灵动加载反馈与 Obsidian 全特性渲染支持 */}}
+{{/* extend_footer.html - 极速即时预加载、顶部灵动加载反馈、Obsidian 全特性渲染与陈旧缓存自动热同步 */}}
 
 <!-- 极速即时预加载：在鼠标悬停 65ms 或按下瞬间提前预取页面，点击直接命中缓存 -->
 <script type="speculationrules">
@@ -108,7 +108,36 @@
 })();
 </script>
 
-<!-- Obsidian 语法增强：高亮 ==、单波浪删除线 ~、Callouts 提示框 -->
+<!-- 自动热同步：检测到服务器有新版本时自动静默刷新陈旧页面，无需手动 F5 -->
+<script>
+(function() {
+  try {
+    var meta = document.querySelector('meta[name="site-build-timestamp"]');
+    if (!meta) return;
+    var currentVer = parseInt(meta.getAttribute('content'), 10);
+    if (!currentVer) return;
+
+    var lastKnownVer = parseInt(localStorage.getItem('syu-site-ver'), 10) || 0;
+
+    if (currentVer >= lastKnownVer) {
+      localStorage.setItem('syu-site-ver', currentVer);
+    } else if (currentVer < lastKnownVer) {
+      // 当前页面是从陈旧强缓存读出来的，自动静默刷新拉取最新发布版
+      window.location.reload();
+      return;
+    }
+
+    // 监听前进后退的内存冻结缓存 (bfcache)，确保返回时也是最新状态
+    window.addEventListener('pageshow', function(e) {
+      if (e.persisted) {
+        window.location.reload();
+      }
+    });
+  } catch (_) {}
+})();
+</script>
+
+<!-- Obsidian 语法增强：高亮 ==、单波浪删除线 ~、Callouts 提示框、拖入图片 ![[...]] -->
 <script>
 (function() {
   var content = document.querySelector('.post-content');
@@ -128,7 +157,7 @@
     }
   });
 
-  // 2. 安全替换非代码区域的 ==高亮== 与 ~单波浪删除线~
+  // 2. 安全替换非代码区域的 ==高亮==、删除线 与 Obsidian 图片 ![[...]]
   var walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT, {
     acceptNode: function(node) {
       if (node.parentElement && (node.parentElement.closest('pre') || node.parentElement.closest('code'))) {
