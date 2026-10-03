@@ -139,3 +139,17 @@
   from { opacity: 0; transform: translateY(5px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* 高亮荧光笔效果 ==高亮== */
+mark {
+  background-color: #fff176;
+  color: #1a1a1a;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+[data-theme="dark"] mark {
+  background-color: #fbc02d;
+  color: #000000;
+}
