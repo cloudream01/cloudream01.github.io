@@ -175,25 +175,31 @@ mark {
 .callout-warning, .callout-caution { border-left-color: #f57c00; }
 .callout-danger, .callout-error { border-left-color: #e53935; }
 
-/* 正文链接精致 Hover 效果 */
-.post-content a:not(.anchor) {
-  color: var(--primary);
-  text-decoration: none;
+/* 正文链接精致 Hover 效果（支持带加粗、强调的链接） */
+.post-content a:not(.anchor),
+.md-content a:not(.anchor) {
+  color: var(--primary) !important;
+  text-decoration: none !important;
   border-bottom: 1.5px solid var(--secondary);
   transition: all 0.18s ease-in-out;
-  padding: 0.1em 0.25em;
-  margin: 0 -0.1em;
-  border-radius: 4px;
+  padding: 0.05em 0.2em;
+  border-radius: 3px;
 }
 
-.post-content a:not(.anchor):hover {
-  color: #2563eb;
-  border-bottom-color: #2563eb;
+.post-content a:not(.anchor):hover,
+.post-content a:not(.anchor):hover *,
+.md-content a:not(.anchor):hover,
+.md-content a:not(.anchor):hover * {
+  color: #2563eb !important;
+  border-bottom-color: #2563eb !important;
   background-color: rgba(37, 99, 235, 0.08);
 }
 
-[data-theme="dark"] .post-content a:not(.anchor):hover {
-  color: #60a5fa;
-  border-bottom-color: #60a5fa;
+[data-theme="dark"] .post-content a:not(.anchor):hover,
+[data-theme="dark"] .post-content a:not(.anchor):hover *,
+[data-theme="dark"] .md-content a:not(.anchor):hover,
+[data-theme="dark"] .md-content a:not(.anchor):hover * {
+  color: #60a5fa !important;
+  border-bottom-color: #60a5fa !important;
   background-color: rgba(96, 165, 250, 0.12);
 }

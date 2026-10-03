@@ -146,13 +146,19 @@
   textNodes.forEach(function(node) {
     var val = node.nodeValue;
     if (!val) return;
-    if (val.indexOf('==') === -1 && val.indexOf('~') === -1) return;
+    if (val.indexOf('==') === -1 && val.indexOf('~') === -1 && val.indexOf('![[') === -1) return;
 
     var replaced = val
       // ==高亮文本== -> <mark>高亮文本</mark>
       .replace(/==([^=\n\r]+?)==/g, '<mark>$1</mark>')
-      // ~单波浪删除线~ -> <del>删除线</del>
-      .replace(/(^|[^\w~])~([^~\n\r\s]+?)~($|[^\w~])/g, '$1<del>$2</del>$3');
+      // 兼容两边或单边删除线（如 ~~jsla 或 ~jsla）
+      .replace(/(^|[ \t\n])(?:~~|~)([^~\n\r\s]+?)(?:~~|~|(?=[\n\r]|$))/g, '$1<del>$2</del>')
+      // Obsidian 图片嵌入 ![[图片名.png]]
+      .replace(/!\[\[([^\]|]+?\.(?:png|jpg|jpeg|gif|webp|svg|bmp))(?:\|(\d+)(?:x\d+)?)?\]\]/gi, function(match, filename, width) {
+        var cleanName = encodeURI(filename.trim());
+        var w = width ? ' width="' + width + '"' : '';
+        return '<img src="/' + cleanName + '"' + w + ' alt="' + filename.trim() + '" style="max-width:100%;height:auto;border-radius:var(--radius);margin:1.5rem auto;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.06);">';
+      });
 
     if (replaced !== val) {
       var span = document.createElement('span');

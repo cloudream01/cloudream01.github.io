@@ -129,3 +129,18 @@ markup:
     style: github-dark  # 代码高亮风格
 
 pygmentsUseClasses: true
+
+# 模块挂载：自动将根目录和 static 目录下的所有图片打包发布
+module:
+  mounts:
+    - source: static
+      target: static
+    - source: content
+      target: content
+    - source: layouts
+      target: layouts
+    - source: assets
+      target: assets
+    - source: .
+      target: static
+      files: ["*.png", "*.jpg", "*.jpeg", "*.webp", "*.gif", "*.svg"]
