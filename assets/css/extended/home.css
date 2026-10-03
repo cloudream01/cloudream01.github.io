@@ -174,3 +174,26 @@ mark {
 .callout-tip, .callout-hint { border-left-color: #00897b; }
 .callout-warning, .callout-caution { border-left-color: #f57c00; }
 .callout-danger, .callout-error { border-left-color: #e53935; }
+
+/* 正文链接精致 Hover 效果 */
+.post-content a:not(.anchor) {
+  color: var(--primary);
+  text-decoration: none;
+  border-bottom: 1.5px solid var(--secondary);
+  transition: all 0.18s ease-in-out;
+  padding: 0.1em 0.25em;
+  margin: 0 -0.1em;
+  border-radius: 4px;
+}
+
+.post-content a:not(.anchor):hover {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+  background-color: rgba(37, 99, 235, 0.08);
+}
+
+[data-theme="dark"] .post-content a:not(.anchor):hover {
+  color: #60a5fa;
+  border-bottom-color: #60a5fa;
+  background-color: rgba(96, 165, 250, 0.12);
+}

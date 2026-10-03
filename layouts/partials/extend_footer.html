@@ -1,6 +1,6 @@
-{{/* extend_footer.html - 即时预加载与 Obsidian 全特性渲染支持 */}}
+{{/* extend_footer.html - 极速即时预加载、顶部灵动加载反馈与 Obsidian 全特性渲染支持 */}}
 
-<!-- 现代浏览器原生预加载规则 -->
+<!-- 极速即时预加载：在鼠标悬停 65ms 或按下瞬间提前预取页面，点击直接命中缓存 -->
 <script type="speculationrules">
 {
   "prefetch": [
@@ -17,36 +17,94 @@
 }
 </script>
 
-<!-- 通用 hover 预加载脚本：鼠标悬停或触碰链接时即提前静默加载页面 -->
 <script>
+/*! instant.page v5.2.0 - (C) 2019-2023 Alexandre Dieulot - https://instant.page/license */
 (function() {
-  var prefetched = new Set();
+  var prefetcher = document.createElement('link');
+  var isSupported = prefetcher.relList && prefetcher.relList.supports && prefetcher.relList.supports('prefetch');
+  if (!isSupported) return;
+
+  var preloaded = new Set();
+
   function prefetch(url) {
-    if (prefetched.has(url)) return;
-    prefetched.add(url);
-    var link = document.createElement("link");
-    link.rel = "prefetch";
+    if (preloaded.has(url)) return;
+    preloaded.add(url);
+    var link = document.createElement('link');
+    link.rel = 'prefetch';
     link.href = url;
     document.head.appendChild(link);
   }
 
-  document.addEventListener("pointerover", function(e) {
-    var a = e.target.closest("a");
-    if (!a || !a.href) return;
-    if (a.origin !== location.origin) return;
-    if (a.pathname === location.pathname) return;
-    if (a.getAttribute("href").startsWith("#")) return;
-    prefetch(a.href);
+  var timer;
+  document.addEventListener('pointerover', function(e) {
+    var a = e.target.closest('a');
+    if (!a || !a.href || a.origin !== location.origin || a.pathname === location.pathname || a.getAttribute('href').startsWith('#')) return;
+    timer = setTimeout(function() { prefetch(a.href); }, 65);
   }, { passive: true });
 
-  document.addEventListener("touchstart", function(e) {
-    var a = e.target.closest("a");
-    if (!a || !a.href) return;
-    if (a.origin !== location.origin) return;
-    if (a.pathname === location.pathname) return;
-    if (a.getAttribute("href").startsWith("#")) return;
+  document.addEventListener('pointerout', function() {
+    clearTimeout(timer);
+  }, { passive: true });
+
+  document.addEventListener('touchstart', function(e) {
+    var a = e.target.closest('a');
+    if (!a || !a.href || a.origin !== location.origin || a.pathname === location.pathname || a.getAttribute('href').startsWith('#')) return;
     prefetch(a.href);
   }, { passive: true });
+})();
+</script>
+
+<!-- 顶部 2px 极简即时加载条：点击瞬间提供反馈，彻底告别假死等待感 -->
+<style>
+#top-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2.5px;
+  width: 0%;
+  background: var(--primary);
+  opacity: 0;
+  z-index: 99999;
+  pointer-events: none;
+  transition: width 0.3s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.2s ease;
+}
+#top-progress.loading {
+  opacity: 1;
+  width: 75%;
+}
+#top-progress.done {
+  width: 100%;
+  opacity: 0;
+  transition: width 0.15s ease, opacity 0.25s 0.1s ease;
+}
+</style>
+<div id="top-progress"></div>
+
+<script>
+(function() {
+  var bar = document.getElementById('top-progress');
+  if (!bar) return;
+
+  document.addEventListener('click', function(e) {
+    var a = e.target.closest('a');
+    if (!a || !a.href) return;
+    if (a.origin !== location.origin) return;
+    if (a.target === '_blank') return;
+    if (a.getAttribute('href').startsWith('#')) return;
+    if (a.pathname === location.pathname && a.search === location.search) return;
+
+    // 点击瞬间启动顶部指示条
+    bar.classList.remove('done');
+    bar.classList.add('loading');
+  });
+
+  window.addEventListener('pageshow', function() {
+    bar.classList.add('done');
+    setTimeout(function() {
+      bar.classList.remove('loading', 'done');
+      bar.style.width = '0%';
+    }, 400);
+  });
 })();
 </script>
 
@@ -93,7 +151,7 @@
     var replaced = val
       // ==高亮文本== -> <mark>高亮文本</mark>
       .replace(/==([^=\n\r]+?)==/g, '<mark>$1</mark>')
-      // ~单波浪删除线~ -> <del>删除线</del>（避免破坏公式）
+      // ~单波浪删除线~ -> <del>删除线</del>
       .replace(/(^|[^\w~])~([^~\n\r\s]+?)~($|[^\w~])/g, '$1<del>$2</del>$3');
 
     if (replaced !== val) {
