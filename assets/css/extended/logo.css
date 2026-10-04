@@ -10,12 +10,6 @@
   margin-top: -1px;
   pointer-events: none;
   overflow: visible;
-  transition: transform 0.25s ease, opacity 0.25s ease;
-}
-
-/* 悬停时轻微上浮，呼应「云舒」的意象 */
-.logo a:hover > svg {
-  transform: translateY(-1.5px);
 }
 
 /* 文字与标记之间的间距（PaperMod 用 column-gap，窄屏换行时仍成立） */
@@ -27,14 +21,5 @@
   .logo a > svg {
     width: 28px;
     height: 26px;
-  }
-}
-
-/* 尊重系统的“减少动态效果”设置 */
-@media (prefers-reduced-motion: reduce) {
-  .logo a > svg,
-  .logo a:hover > svg {
-    transition: none;
-    transform: none;
   }
 }
