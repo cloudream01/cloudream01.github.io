@@ -10,3 +10,8 @@
 
 {{/* 预连接 GitHub API（giscus 依赖） */}}
 <link rel="dns-prefetch" href="https://api.github.com">
+
+{{/* 网站图标由主题 head.html 按约定输出，文件放在 static/ 根目录：
+     favicon.ico / favicon-16x16.png / favicon-32x32.png / apple-touch-icon.png
+     这里不再重复引入，只声明一个显式 SVG 图标（现代浏览器优先使用，缩放不糊）。 */}}
+<link rel="icon" type="image/svg+xml" href="{{ "logo.svg" | absURL }}">

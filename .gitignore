@@ -5,3 +5,6 @@ node_modules/
 
 # Obsidian 配置目录
 .obsidian/
+
+# Logo 资产生成脚本与草稿（仅本地留存，可随时删除）
+.dsh-logo-draft/
