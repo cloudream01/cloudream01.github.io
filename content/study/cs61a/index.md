@@ -1,5 +1,5 @@
 ---
-title: CS61A:第一门公开课
+title: CS61A
 date: 2026-10-05
 tags:
   - 学习
