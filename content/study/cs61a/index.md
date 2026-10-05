@@ -1,5 +1,5 @@
 ---
-title: CS61A
+title: CS61A-2026Spring-UCB
 date: 2026-10-05
 tags:
   - 学习
